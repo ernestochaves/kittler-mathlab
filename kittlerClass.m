@@ -1,11 +1,12 @@
 function kittler
-    U = rgb2gray(imread('trackedCell15.tif'));    
+    U = rgb2gray(imread('cuadro1_005.bmp'));    
     histU = getHistogram(U);
-    hn = HistogramaNormalizado(U)
+    hn = HistogramNormalized(U)
     figure(1);
     plot(histU);
     figure(2);
     plot(hn);
+    P = getP(histU, 1, 255)
 %     kittlerThresh(histU);
 end
 
@@ -14,7 +15,7 @@ function histU = getHistogram(U)
 end
 function hn = HistogramNormalized(U)
     [f,c]=size(U);
-    hist = Histograma(U);
+    hist = Histogram(U);
     histn = hist/(f*c);
     hn = histn;
 end
@@ -36,7 +37,7 @@ end
 
 %calculates the cum sum of a histogram from a to b
 function P = getP(histU, a, b)
-   
+   P = cumsum(histU(a:b), 1)
 end
 
 %calculates the mean in the given interval
