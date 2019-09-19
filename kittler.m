@@ -27,14 +27,13 @@ end
 function varU = getVar(histU, a, b, P, mu)
     varU = sum(histU(a:b) .* (((a:b)' - mu) .^2) ) / P;
 end
- 
+
 %gets the likelihood of a given threshold, using kittler
 function [Jth, P1, mu1, var1, P2, mu2, var2] = getLikelihood(histU, th)
    
     
 end
- 
- 
+
 %kittler
 function [thOpt, gmmParams] = kittlerThresh(histU)
     
