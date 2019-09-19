@@ -3,8 +3,9 @@ function kittler
     histU = getHistogram(U);
     figure(1);
     plot(histU);
-    P = getP(histU, 1, 255)
-    mu = getMu(histU, 1, 255, P)
+    P = getP(histU, 1, 255);
+    mu = getMu(histU, 1, 255, P);
+    varU = getVar(histU, 1, 150, P, mu);
 %     kittlerThresh(histU);
 end
  
@@ -24,7 +25,7 @@ end
  
 %calculates the variance in a given interval
 function varU = getVar(histU, a, b, P, mu)
-    
+    varU = sum(histU(a:b) .* (((a:b)' - mu) .^2) ) / P;
 end
  
 %gets the likelihood of a given threshold, using kittler
