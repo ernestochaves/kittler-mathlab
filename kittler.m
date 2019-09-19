@@ -3,10 +3,7 @@ function kittler
     histU = getHistogram(U);
     figure(1);
     plot(histU);
-    P = getP(histU, 1, 255);
-    mu = getMu(histU, 1, 255, P);
-    varU = getVar(histU, 1, 150, P, mu);
-%     kittlerThresh(histU);
+    kittlerThresh(histU);
 end
  
 function histU = getHistogram(U)
