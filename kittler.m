@@ -14,12 +14,12 @@ end
  
 %calculates the cum sum of a histogram from a to b
 function P = getP(histU, a, b)
-   P = cumsum(histU(a:b), 1)
+   P = sum(histU(a:b));
 end
  
 %calculates the mean in the given interval
 function mu = getMu(histU, a, b, P)    
-     mu = sum(histU(a:b) .* (a:b)) * P;
+    mu = sum(histU(a:b) .* (a:b)') / P;
 end
  
 %calculates the variance in a given interval
