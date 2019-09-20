@@ -10,6 +10,8 @@ function kittler
     [thOpt, gmmParams]=kittlerThresh(histU);
     fprintf('thOpt: %i\n', thOpt)
     fprintf('gmmParams: %i\n', gmmParams)
+    figure(2);
+    plot(plotJth(histU));
 end
  
 function histU = getHistogram(U)
@@ -35,9 +37,14 @@ end
 
 %gets the likelihood of a given threshold, using kittler
 function [Jth, P1, mu1, var1, P2, mu2, var2] = getLikelihood(histU, th)
-    #We need a big number here so doesnt get confused with the min. 
+    %We need a big number here so doesnt get confused with the min. 
     Jth=Inf*1; 
-    P1=mu1=var1=P2=mu2=var2=0;
+    P1=0;
+    mu1=0;
+    var1=0;
+    P2=0;
+    mu2=0;
+    var2=0;
     P1 = getP(histU,1,th);
     P2 = getP(histU,th+1,255);
     %to avoid division by zero errors
@@ -62,8 +69,8 @@ function [thOpt, gmmParams] = kittlerThresh(histU)
         [Jth, P1, mu1, var1, P2, mu2, var2]= getLikelihood(histU,T);
         if(P1 > 0) && (P2 > 0)
             if(Jth<minJth)
-                #Optimal threshold is where Jth is at its minimum 
-                #We could also return the "T"
+                % Optimal threshold is where Jth is at its minimum 
+                % We could also return the "T"
                 minJth=Jth;
                 thOpt=T;
                 gmmParams=[Jth, P1, mu1, var1, P2, mu2, var2];
@@ -75,5 +82,13 @@ end
 %applies the given treshold to the image
 function Th = applyThreshold(U, tau)
    
+end
+
+function JthsPlot = plotJth(histU)
+    JthsPlot = zeros(255,1);
+    for T = 1:255
+        [Jth, P1, mu1, var1, P2, mu2, var2]= getLikelihood(histU,T);
+        JthsPlot(T) = Jth;
+    end
 end
 
