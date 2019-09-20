@@ -1,13 +1,21 @@
 function kittler
-    U = rgb2gray(imread('cuadro1_005.bmp'));    
+    %Esta parte es solo requerida con la imagen RGB
+    %U = rgb2gray(imread('trackedCell15.tif'));    
+
+    %Procesando la imagen 1, escala de grises
+    U = imread('cuadro1_005.bmp');  
     histU = getHistogram(U);
     figure(1);
     plot(histU);
-    kittlerThresh(histU);
+    [thOpt, gmmParams]=kittlerThresh(histU);
+    fprintf('thOpt: %i\n', thOpt)
+    fprintf('gmmParams: %i\n', gmmParams)
 end
  
 function histU = getHistogram(U)
-   histU = double(histc(U(:), 0:255)) / size(U(:), 1);
+    %[height, width, colour_planes]=size(U);
+    %height, width, colour_planes
+    histU = double(histc(U(:), 0:255)) / size(U(:), 1);
 end
  
 %calculates the cum sum of a histogram from a to b
@@ -27,14 +35,41 @@ end
 
 %gets the likelihood of a given threshold, using kittler
 function [Jth, P1, mu1, var1, P2, mu2, var2] = getLikelihood(histU, th)
-   
-    
+    #We need a big number here so doesnt get confused with the min. 
+    Jth=Inf*1; 
+    P1=mu1=var1=P2=mu2=var2=0;
+    P1 = getP(histU,1,th);
+    P2 = getP(histU,th+1,255);
+    %to avoid division by zero errors
+    if (P1 > 0) && (P2 > 0)
+        mu1 =  getMu(histU, 1, th, P1);  
+        mu2 =  getMu(histU, th+1, 255, P2);  
+        var1 = getVar(histU, 1, th, P1, mu1);
+        var2 = getVar(histU, th+1,255, P2, mu2);
+        %Avoid weird errors with -inf
+        if (sqrt(var1) > 0) && (sqrt(var2) > 0)
+            Jth= 1 + 2 * (P1 * log(sqrt(var1)) + P2 * log(sqrt(var2)))- 2 * (P1 * log(P1) + P2 * log(P2));   
+        end
+    end 
 end
 
 %kittler
 function [thOpt, gmmParams] = kittlerThresh(histU)
-    
- 
+    %gmmParams: see https://www.coursera.org/lecture/robotics-learning/1-4-2-gmm-parameter-estimation-via-em-79fAL
+    minJth=Inf*1; 
+    results = zeros(255,1);
+    for T = 1:255
+        [Jth, P1, mu1, var1, P2, mu2, var2]= getLikelihood(histU,T);
+        if(P1 > 0) && (P2 > 0)
+            if(Jth<minJth)
+                #Optimal threshold is where Jth is at its minimum 
+                #We could also return the "T"
+                minJth=Jth;
+                thOpt=T;
+                gmmParams=[Jth, P1, mu1, var1, P2, mu2, var2];
+            end
+        end
+    end
 end
  
 %applies the given treshold to the image
