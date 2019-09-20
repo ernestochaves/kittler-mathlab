@@ -12,6 +12,17 @@ function kittler
     fprintf('gmmParams: %i\n', gmmParams)
     figure(2);
     plot(plotJth(histU));
+
+    um = applyThreshold(U, thOpt);
+    figure(3);
+    imshow(um);
+    %Procesando la imagen 2
+    img2 = rgb2gray(imread('trackedCell15.tif'));
+    histU2 = getHistogram(img2);
+    [thOpt2, gmmParams2]=kittlerThresh(histU2);
+    figure(4);
+    um2 = applyThreshold(img2, thOpt2);
+    imshow(um2);
 end
  
 function histU = getHistogram(U)
@@ -81,7 +92,9 @@ end
  
 %applies the given treshold to the image
 function Th = applyThreshold(U, tau)
-   
+
+   Th =(U > tau);
+
 end
 
 function JthsPlot = plotJth(histU)
